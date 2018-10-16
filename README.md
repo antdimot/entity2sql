@@ -4,7 +4,7 @@ A simple library for building SQL statements by entity class.
 
 ## Example
 
-> Entity defintion:
+> Entity definition:
 
     [TableMap( Name = "USERS" )]
     public class User
