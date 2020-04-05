@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E2S", "E2S\E2S.csproj", "{5030A566-A322-4536-B2E6-6A22F3870D0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADM.EntityToSQL", "ADM.EntityToSQL\ADM.EntityToSQL.csproj", "{5030A566-A322-4536-B2E6-6A22F3870D0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E2S.Tests", "E2S.Tests\E2S.Tests.csproj", "{8F7E45C5-6C6E-45F0-9522-81CD849AAF0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADM.EntityToSQL.Tests", "ADM.EntityToSQL.Tests\ADM.EntityToSQL.Tests.csproj", "{8F7E45C5-6C6E-45F0-9522-81CD849AAF0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
