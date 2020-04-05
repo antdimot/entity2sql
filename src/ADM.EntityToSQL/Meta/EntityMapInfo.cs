@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace E2S.Meta
+namespace ADM.EntityToSQL.Meta
 {
     public class EntityInfo
     {

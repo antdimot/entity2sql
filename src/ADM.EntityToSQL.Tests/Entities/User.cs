@@ -1,9 +1,9 @@
-﻿using E2S.Meta;
+﻿using ADM.EntityToSQL.Meta;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace E2S.Tests.Entities
+namespace ADM.EntityToSQL.Tests.Entities
 {
     [TableMap( Name = "USERS" )]
     public class User

@@ -1,10 +1,10 @@
-﻿using E2S.Meta;
+﻿using ADM.EntityToSQL.Meta;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace E2S
+namespace ADM.EntityToSQL
 {
     public sealed class SQLCommandBuilder
     {

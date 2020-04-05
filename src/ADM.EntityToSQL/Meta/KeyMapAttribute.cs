@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace E2S.Meta
+namespace ADM.EntityToSQL.Meta
 {
     public class KeyMapAttribute : ColumnMapAttribute
     {

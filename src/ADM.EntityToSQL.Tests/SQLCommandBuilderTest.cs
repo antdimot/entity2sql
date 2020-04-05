@@ -1,7 +1,7 @@
-using E2S.Tests.Entities;
+using ADM.EntityToSQL.Tests.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace E2S.Tests
+namespace ADM.EntityToSQL.Tests
 {
     [TestClass]
     public class SQLCommandBuilderTest
