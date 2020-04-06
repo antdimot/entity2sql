@@ -13,5 +13,8 @@ namespace ADM.EntityToSQL.Tests.Entities
 
         [ColumnMap( Name = "LAST_NAME" )]
         public string LastName { get; set; }
+
+        [ColumnMap( Name = "AGE" )]
+        public int Age { get; set; }
     }
 }

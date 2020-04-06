@@ -24,7 +24,7 @@ namespace ADM.EntityToSQL.Tests
 
             var andSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" && o.LastName == "Di Motta" );
 
-            var orSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" || o.LastName == "Di Motta" );
+            var orSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" || o.LastName == "Di Motta" && o.Age == 45 );
 
             Assert.IsTrue( andSelect.Contains( "AND" ) );
 

@@ -40,21 +40,19 @@ namespace ADM.EntityToSQL.Builder
                     var orLeftExpResult = EvaluatePredicate<T>( oreExp.Left );
                     var orRightExpResult = EvaluatePredicate<T>( oreExp.Right );
 
-                    return $"{orLeftExpResult} OR {orRightExpResult}";
+                    return $"({orLeftExpResult} OR {orRightExpResult})";
                 case ExpressionType.AndAlso:
                     var andExp = expression as BinaryExpression;
 
                     var andLeftExpResult = EvaluatePredicate<T>( andExp.Left );
                     var andRightExpResult = EvaluatePredicate<T>( andExp.Right );
 
-                    return $"{andLeftExpResult} AND {andRightExpResult}";
+                    return $"({andLeftExpResult} AND {andRightExpResult})";
                 case ExpressionType.Constant:
                     var cexp = expression as ConstantExpression;
 
                     if( cexp.Type.Name == "String" )
-                    {
                         return $"'{cexp.Value}'";
-                    }
 
                     return $"{cexp.Value}";
                 case ExpressionType.Equal:
