@@ -22,9 +22,13 @@ namespace ADM.EntityToSQL.Tests
         {
             var sqlBuilder = new SQLStatementBuilder();
 
-            var selectCommand = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" );
+            var andSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" && o.LastName == "Di Motta" );
 
-            Assert.IsTrue( selectCommand.Contains( "WHERE" ) );
+            var orSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" || o.LastName == "Di Motta" );
+
+            Assert.IsTrue( andSelect.Contains( "AND" ) );
+
+            Assert.IsTrue( orSelect.Contains( "OR" ) );
         }
     }
 }

@@ -34,6 +34,20 @@ namespace ADM.EntityToSQL.Builder
         {
             switch( expression.NodeType )
             {
+                case ExpressionType.OrElse:
+                    var oreExp = expression as BinaryExpression;
+
+                    var orLeftExpResult = EvaluatePredicate<T>( oreExp.Left );
+                    var orRightExpResult = EvaluatePredicate<T>( oreExp.Right );
+
+                    return $"{orLeftExpResult} OR {orRightExpResult}";
+                case ExpressionType.AndAlso:
+                    var andExp = expression as BinaryExpression;
+
+                    var andLeftExpResult = EvaluatePredicate<T>( andExp.Left );
+                    var andRightExpResult = EvaluatePredicate<T>( andExp.Right );
+
+                    return $"{andLeftExpResult} AND {andRightExpResult}";
                 case ExpressionType.Constant:
                     var cexp = expression as ConstantExpression;
 
@@ -46,10 +60,10 @@ namespace ADM.EntityToSQL.Builder
                 case ExpressionType.Equal:
                     var bexp = expression as BinaryExpression;
 
-                    var leftExpression = EvaluatePredicate<T>( bexp.Left );
-                    var rightExpression = EvaluatePredicate<T>( bexp.Right );
+                    var leftExp = EvaluatePredicate<T>( bexp.Left );
+                    var rightExp = EvaluatePredicate<T>( bexp.Right );
                     
-                    return $"{leftExpression} = {rightExpression}";
+                    return $"{leftExp} = {rightExp}";
                 case ExpressionType.Lambda:
                     var lexp = expression as LambdaExpression;
 
