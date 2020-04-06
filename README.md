@@ -23,5 +23,6 @@ A simple library for building SQL statements by entity class.
 
     var sqlBuilder = new SQLCommandBuilder();
 
-    // SELECT ID,FIRST_NAME,LAST_NAME FROM USERS
-    var selectCommand = sqlBuilder.MakeSelectCommand<User>();
+    var selectCommand = sqlBuilder.MakeSelectCommand<User>( o => o.FirstName == "Antonio" );
+
+    // SELECT ID,FIRST_NAME,LAST_NAME FROM USERS WHERE FIRST_NAME = 'Antonio'
