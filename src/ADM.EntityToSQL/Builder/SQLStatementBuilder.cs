@@ -8,6 +8,13 @@ namespace ADM.EntityToSQL.Builder
 {
     public partial class SQLStatementBuilder
     {
+        private int _counter = 0;
+
+        private int NextCounter()
+        {
+            return _counter += 1;
+        }
+
         // caching entity map metadata
         private IDictionary<string,EntityInfo> _mapInfo;
 
@@ -20,7 +27,7 @@ namespace ADM.EntityToSQL.Builder
         {
             if( !_mapInfo.ContainsKey( typeof( T ).Name ) )
             {
-                var entityMap = EntityInfo.BuildMap<T>();
+                var entityMap = EntityInfo.BuildMap<T>( NextCounter() );
                 entityMap.Builder = this;
 
                 _mapInfo.Add( typeof( T ).Name, entityMap );
@@ -59,20 +66,6 @@ namespace ADM.EntityToSQL.Builder
 
             return paramBuilder.ToString();
         }
-
-        //private string KeysColumnsBuilder( EntityInfo entityInfo )
-        //{
-        //    var keyColumnBuilder = new StringBuilder();
-
-        //    foreach( var item in entityInfo.Keys )
-        //    {
-        //        keyColumnBuilder.Append( $"{item}=@{item} AND " );
-        //    }
-
-        //    keyColumnBuilder.Remove( keyColumnBuilder.Length - 5, 5 );
-
-        //    return keyColumnBuilder.ToString();
-        //}
 
         public object GetValue<T>( string properyName, T obj )
         {

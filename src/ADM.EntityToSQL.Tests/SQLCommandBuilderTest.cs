@@ -10,35 +10,42 @@ namespace ADM.EntityToSQL.Tests
         [TestMethod]
         public void MakeSelect_SHOULD_RETURN_SUCCESS()
         {
+            var check = "SELECT t1.ID,t1.FIRST_NAME,t1.LAST_NAME,t1.AGE,t1.RoleID FROM USERS t1";
+
             var sqlBuilder = new SQLStatementBuilder();
 
-            var selectCommand1 = sqlBuilder.MakeSelect<User>();
+            var result = sqlBuilder.MakeSelect<User>();
 
-            Assert.IsTrue( selectCommand1.Contains( "USERS" ) );
+            Assert.IsTrue( check.Equals(result) );
         }
 
         [TestMethod]
         public void MakeSelect_with_params_SHOULD_RETURN_SUCCESS()
         {
+            var check1 = "SELECT t1.ID,t1.FIRST_NAME,t1.LAST_NAME,t1.AGE,t1.RoleID FROM USERS t1 WHERE t1.FIRST_NAME = 'Antonio'";
+            var check2 = "SELECT t1.ID,t1.FIRST_NAME,t1.LAST_NAME,t1.AGE,t1.RoleID FROM USERS t1 WHERE (t1.FIRST_NAME = 'Antonio' OR (t1.LAST_NAME = 'Di Motta' AND t1.AGE = 45))";
+
             var sqlBuilder = new SQLStatementBuilder();
 
-            var andSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" );
+            var result1 = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" );
 
-            var orSelect = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" || o.LastName == "Di Motta" && o.Age == 45 );
+            Assert.IsTrue( check1.Equals( result1 ) );
 
-            Assert.IsTrue( andSelect.Contains( "WHERE" ) );
+            var result2 = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" || o.LastName == "Di Motta" && o.Age == 45 );
 
-            Assert.IsTrue( orSelect.Contains( "OR" ) );
+            Assert.IsTrue( check2.Equals( result2 ) );
         }
 
         [TestMethod]
-        public void MakeJoin_with_params_SHOULD_RETURN_SUCCESS()
+        public void MakeJoin_SHOULD_RETURN_SUCCESS()
         {
+            var check = "SELECT t1.ID,t1.FIRST_NAME,t1.LAST_NAME,t1.AGE,t1.RoleID,t2.ID,t2.NAME FROM USERS t1 INNER JOIN ROLES t2 ON t1.RoleID=t2.t2.ID";
+
             var sqlBuilder = new SQLStatementBuilder();
 
-            var joinSelect = sqlBuilder.MakeJoin<User,Role>( (u,r) => u.Role.Id == r.Id );
+            var result = sqlBuilder.MakeJoin<User,Role>( (u,r) => u.Role.Id == r.Id );
 
-            Assert.IsTrue( joinSelect.Contains( "JOIN" ) );
+            Assert.IsTrue( check.Equals(result) );
         }
     }
 }

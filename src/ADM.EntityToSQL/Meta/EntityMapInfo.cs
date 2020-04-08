@@ -9,20 +9,6 @@ namespace ADM.EntityToSQL.Meta
 {
     public class EntityInfo
     {
-        static readonly object _object = new object();
-
-        private static int _counter = 0;
-
-        private static int NextCounter()
-        {
-            lock( _object )
-            {
-                _counter += 1;
-            }
-
-            return _counter;
-        }
-
         public SQLStatementBuilder Builder { get; set; }
 
         public int Id { get; private set; }
@@ -44,9 +30,9 @@ namespace ADM.EntityToSQL.Meta
             return ColumnsDictionary[propertyName];
         }
 
-        public EntityInfo( Type associated )
+        public EntityInfo( Type associated, int entityId )
         {
-            Id = NextCounter();
+            Id = entityId;
 
             Alias = $"t{Id}";
 
@@ -55,9 +41,9 @@ namespace ADM.EntityToSQL.Meta
             ColumnsDictionary = new Dictionary<string, string>();
         }
 
-        public static EntityInfo BuildMap<T>()
+        public static EntityInfo BuildMap<T>( int entityId )
         {
-            var einfo = new EntityInfo( typeof(T) );
+            var einfo = new EntityInfo( typeof(T), entityId );
 
             var tables = (TableMapAttribute[])typeof( T )
                                 .GetCustomAttributes( typeof( TableMapAttribute ), false );

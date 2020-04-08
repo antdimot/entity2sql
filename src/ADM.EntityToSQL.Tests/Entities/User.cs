@@ -17,7 +17,7 @@ namespace ADM.EntityToSQL.Tests.Entities
         [ColumnMap( Name = "AGE" )]
         public int Age { get; set; }
 
-        [FKey( Name = "RoleID" )]
+        [ColumnMap( Name = "RoleID" )]
         public Role Role { get; set; }
     }
 }

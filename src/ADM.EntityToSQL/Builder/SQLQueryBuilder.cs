@@ -56,8 +56,8 @@ namespace ADM.EntityToSQL.Builder
                     var bexp = expression as BinaryExpression;
 
                     var leftExp = EvaluatePredicate<T>( bexp.Left );
-                    var rightExp = EvaluatePredicate<T>( bexp.Right );
-                    
+                    var rightExp = EvaluatePredicate<T>( bexp.Right );               
+
                     return $"{leftExp} = {rightExp}";
                 case ExpressionType.Lambda:
                     var lexp = expression as LambdaExpression;
@@ -66,7 +66,9 @@ namespace ADM.EntityToSQL.Builder
                 case ExpressionType.MemberAccess:
                     var mexp = expression as MemberExpression;
 
-                    return GetMapInfo<T>().ColumnsDictionary[mexp.Member.Name];
+                    var minfo = GetMapInfo<T>();
+
+                    return $"{minfo.Alias}.{minfo.ColumnsDictionary[mexp.Member.Name]}";
                 default:
                     throw new ArgumentException("The expression is not supported.");
             }
