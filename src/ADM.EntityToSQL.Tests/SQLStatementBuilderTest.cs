@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ADM.EntityToSQL.Tests
 {
     [TestClass]
-    public class SQLCommandBuilderTest
+    public class SQLStatementBuilderTest
     {
         [TestMethod]
         public void MakeSelect_SHOULD_RETURN_SUCCESS()
@@ -46,6 +46,30 @@ namespace ADM.EntityToSQL.Tests
             var result = sqlBuilder.MakeJoin<User,Role>( (u,r) => u.Role.Id == r.Id );
 
             Assert.IsTrue( check.Equals(result) );
+        }
+
+        [TestMethod]
+        public void MakeInsert_SHOULD_RETURN_SUCCESS()
+        {
+            var check = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,AGE,RoleID) VALUES (@first_name,@last_name,@age,@roleid)";
+
+            var sqlBuilder = new SQLStatementBuilder();
+
+            var result = sqlBuilder.MakeInsert<User>();
+
+            Assert.IsTrue( check.Equals( result ) );
+        }
+
+        [TestMethod]
+        public void MakeUpdate_SHOULD_RETURN_SUCCESS()
+        {
+            var check = "UPDATE USERS SET FIRST_NAME=@first_name,LAST_NAME=@last_name,AGE=@age,RoleID=@roleid WHERE ID = 1";
+
+            var sqlBuilder = new SQLStatementBuilder();
+
+            var result = sqlBuilder.MakeUpdate<User>( u => u.Id == 1 ) ;
+
+            Assert.IsTrue( check.Equals( result ) );
         }
     }
 }

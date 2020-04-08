@@ -8,7 +8,6 @@ namespace ADM.EntityToSQL.Builder
 {
     public partial class SQLStatementBuilder
     {
-        // create select command for entity
         public string MakeSelect<T>( Expression<Func<T, bool>> predicate = null )
         {
             var mapInfo = GetMapInfo<T>();
@@ -27,22 +26,22 @@ namespace ADM.EntityToSQL.Builder
             }
         }
 
-        private string EvaluatePredicate<T>( Expression expression )
+        private string EvaluatePredicate<T>( Expression expression, bool forQuery = true )
         {
             switch( expression.NodeType )
             {
                 case ExpressionType.OrElse:
                     var oreExp = expression as BinaryExpression;
 
-                    var orLeftExpResult = EvaluatePredicate<T>( oreExp.Left );
-                    var orRightExpResult = EvaluatePredicate<T>( oreExp.Right );
+                    var orLeftExpResult = EvaluatePredicate<T>( oreExp.Left, forQuery );
+                    var orRightExpResult = EvaluatePredicate<T>( oreExp.Right, forQuery );
 
                     return $"({orLeftExpResult} OR {orRightExpResult})";
                 case ExpressionType.AndAlso:
                     var andExp = expression as BinaryExpression;
 
-                    var andLeftExpResult = EvaluatePredicate<T>( andExp.Left );
-                    var andRightExpResult = EvaluatePredicate<T>( andExp.Right );
+                    var andLeftExpResult = EvaluatePredicate<T>( andExp.Left, forQuery );
+                    var andRightExpResult = EvaluatePredicate<T>( andExp.Right, forQuery );
 
                     return $"({andLeftExpResult} AND {andRightExpResult})";
                 case ExpressionType.Constant:
@@ -55,20 +54,27 @@ namespace ADM.EntityToSQL.Builder
                 case ExpressionType.Equal:
                     var bexp = expression as BinaryExpression;
 
-                    var leftExp = EvaluatePredicate<T>( bexp.Left );
-                    var rightExp = EvaluatePredicate<T>( bexp.Right );               
+                    var leftExp = EvaluatePredicate<T>( bexp.Left, forQuery );
+                    var rightExp = EvaluatePredicate<T>( bexp.Right, forQuery );               
 
                     return $"{leftExp} = {rightExp}";
                 case ExpressionType.Lambda:
                     var lexp = expression as LambdaExpression;
 
-                    return EvaluatePredicate<T>( lexp.Body );
+                    return EvaluatePredicate<T>( lexp.Body, forQuery );
                 case ExpressionType.MemberAccess:
                     var mexp = expression as MemberExpression;
 
                     var minfo = GetMapInfo<T>();
 
-                    return $"{minfo.Alias}.{minfo.ColumnsDictionary[mexp.Member.Name]}";
+                    if( forQuery )
+                    {
+                        return $"{minfo.Alias}.{minfo.ColumnsDictionary[mexp.Member.Name]}";
+                    }
+                    else
+                    {
+                        return $"{minfo.ColumnsDictionary[mexp.Member.Name]}";
+                    }
                 default:
                     throw new ArgumentException("The expression is not supported.");
             }

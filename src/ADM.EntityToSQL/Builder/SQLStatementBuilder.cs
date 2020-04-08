@@ -36,13 +36,23 @@ namespace ADM.EntityToSQL.Builder
             return _mapInfo[ typeof( T ).Name ];
         }
 
-        private string ColumnsBuilder( EntityInfo entityInfo )
+        private string ColumnsBuilder( EntityInfo entityInfo, bool forQuery = true )
         {
             var columnBuilder = new StringBuilder();
 
-            foreach( var item in entityInfo.Columns )
+            if( forQuery )
             {
-                columnBuilder.Append( $"{entityInfo.Alias}.{item},");
+                foreach( var item in entityInfo.Columns )
+                {
+                    columnBuilder.Append( $"{entityInfo.Alias}.{item}," );
+                }
+            }
+            else
+            {
+                foreach( var item in entityInfo.Columns )
+                {
+                    columnBuilder.Append( $"{item}," );
+                }
             }
 
             columnBuilder.Remove( columnBuilder.Length - 1, 1 );
@@ -50,15 +60,28 @@ namespace ADM.EntityToSQL.Builder
             return columnBuilder.ToString();
         }
 
-        private string ParamsBuilder( EntityInfo entityInfo )
+        private string ParamsBuilder( EntityInfo entityInfo, bool forInsert = true )
         {
             var paramBuilder = new StringBuilder();
 
-            foreach( var item in entityInfo.Columns )
+            if( forInsert )
             {
-                if( !entityInfo.PKeys.Contains( item ) )
+                foreach( var item in entityInfo.Columns )
                 {
-                    paramBuilder.AppendFormat( "@{0},", item.ToLower() );
+                    if( !entityInfo.PKeys.Contains( item ) )
+                    {
+                        paramBuilder.Append( $"@{item.ToLower() }," );
+                    }
+                }
+            }
+            else
+            {
+                foreach( var item in entityInfo.Columns )
+                {
+                    if( !entityInfo.PKeys.Contains( item ) )
+                    {
+                        paramBuilder.Append( $"{item}=@{item.ToLower() }," );
+                    }
                 }
             }
 

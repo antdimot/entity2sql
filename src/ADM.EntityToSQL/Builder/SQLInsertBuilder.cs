@@ -10,11 +10,11 @@ namespace ADM.EntityToSQL.Builder
         {
             var mapInfo = GetMapInfo<T>();
 
-            var columns = ColumnsBuilder( mapInfo );
+            var columns = ColumnsBuilder( mapInfo, false );
 
             var parameters = ParamsBuilder( mapInfo );
 
-            return $"INSERT INTO {mapInfo.Table} ({columns}) VALUES ({parameters});";
+            return $"INSERT INTO {mapInfo.Table} ({columns}) VALUES ({parameters})";
         }
     }
 }
