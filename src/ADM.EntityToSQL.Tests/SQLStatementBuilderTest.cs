@@ -71,5 +71,17 @@ namespace ADM.EntityToSQL.Tests
 
             Assert.IsTrue( check.Equals( result ) );
         }
+
+        [TestMethod]
+        public void MakedELETE_SHOULD_RETURN_SUCCESS()
+        {
+            var check = "DELETE FROM USERS WHERE ID = 1";
+
+            var sqlBuilder = new SQLStatementBuilder();
+
+            var result = sqlBuilder.MakeDelete<User>( u => u.Id == 1 );
+
+            Assert.IsTrue( check.Equals( result ) );
+        }
     }
 }
