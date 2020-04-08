@@ -68,10 +68,7 @@ namespace ADM.EntityToSQL.Builder
             {
                 foreach( var item in entityInfo.Columns )
                 {
-                    if( !entityInfo.PKeys.Contains( item ) )
-                    {
-                        paramBuilder.Append( $"@{item.ToLower() }," );
-                    }
+                    paramBuilder.Append( $"@{item.ToLower() }," );
                 }
             }
             else

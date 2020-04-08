@@ -51,7 +51,7 @@ namespace ADM.EntityToSQL.Tests
         [TestMethod]
         public void MakeInsert_SHOULD_RETURN_SUCCESS()
         {
-            var check = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,AGE,RoleID) VALUES (@first_name,@last_name,@age,@roleid)";
+            var check = "INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,AGE,RoleID) VALUES (@id,@first_name,@last_name,@age,@roleid)";
 
             var sqlBuilder = new SQLStatementBuilder();
 
