@@ -3,6 +3,7 @@ using ADM.EntityToSQL.Meta;
 using System;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Text;
 
 namespace ADM.EntityToSQL.Builder
 {
@@ -80,21 +81,47 @@ namespace ADM.EntityToSQL.Builder
             }
         }
 
-        public string MakeJoin<T, K>( Expression<Func<T, K, bool>> predicate )
+        public string MakeJoin<T, K>( Expression<Func<T, K, bool>> joinCondition,
+                                      Expression<Func<T, bool>> firstEntityCondition = null,
+                                      Expression<Func<K, bool>> secondEntityCondition = null )
         {
             var mapInfo1 = GetMapInfo<T>();
             var mapInfo2 = GetMapInfo<K>();
 
-            if( !(predicate.Body.NodeType == ExpressionType.Equal) )
+            if( !(joinCondition.Body.NodeType == ExpressionType.Equal) )
                 throw new ArgumentException("The predicate should be a join property condition.");
 
-            var bexp = predicate.Body as BinaryExpression;
+            var bexp = joinCondition.Body as BinaryExpression;
 
             var column1 = mapInfo1.ColumnsDictionary[typeof( K ).Name];
             var column2 = EvaluatePredicate<K>( bexp.Right );
 
-            return $"SELECT {ColumnsBuilder(mapInfo1)},{ColumnsBuilder(mapInfo2)} FROM {mapInfo1.Table} {mapInfo1.Alias} " +
-                   $"INNER JOIN {mapInfo2.Table} {mapInfo2.Alias} ON {mapInfo1.Alias}.{column1}={mapInfo2.Alias}.{column2}";
+            var queryBuilder = new StringBuilder(
+                    $"SELECT {ColumnsBuilder( mapInfo1 )},{ColumnsBuilder( mapInfo2 )} FROM {mapInfo1.Table} {mapInfo1.Alias} " +
+                    $"INNER JOIN {mapInfo2.Table} {mapInfo2.Alias} ON {mapInfo1.Alias}.{column1}={mapInfo2.Alias}.{column2}"
+            );
+
+            if( firstEntityCondition != null )
+            {
+                var whereCondition1 = EvaluatePredicate<T>( firstEntityCondition );
+                queryBuilder.Append( $" WHERE {whereCondition1}" );
+            }
+
+            if( secondEntityCondition != null )
+            {
+                var whereCondition2 = EvaluatePredicate<K>( secondEntityCondition );
+
+                if( firstEntityCondition == null )
+                {
+                    queryBuilder.Append( $" WHERE {whereCondition2}" );
+                }
+                else
+                {
+                    queryBuilder.Append( $" AND {whereCondition2}" );
+                }              
+            }
+
+            return queryBuilder.ToString();
         }
     }
 }
