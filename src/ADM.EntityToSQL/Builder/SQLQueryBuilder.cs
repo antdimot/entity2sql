@@ -1,6 +1,8 @@
 ﻿
+using ADM.EntityToSQL.Meta;
 using System;
 using System.Linq.Expressions;
+using System.Linq;
 
 namespace ADM.EntityToSQL.Builder
 {
@@ -15,19 +17,14 @@ namespace ADM.EntityToSQL.Builder
 
             if( predicate is null )
             {
-                return $"SELECT {columns} FROM {mapInfo.Table}";
+                return $"SELECT {columns} FROM {mapInfo.Table} {mapInfo.Alias}";
             }
             else
             {
                 var condition = EvaluatePredicate<T>( predicate );
 
-                return $"SELECT {columns} FROM {mapInfo.Table} WHERE {condition}";
+                return $"SELECT {columns} FROM {mapInfo.Table} {mapInfo.Alias} WHERE {condition}";
             }
-        }
-
-        public string MakeSelectCustomWhere<T>( string customWhere )
-        {           
-            return $"{MakeSelect<T>()} WHERE {customWhere}";
         }
 
         private string EvaluatePredicate<T>( Expression expression )
@@ -69,12 +66,27 @@ namespace ADM.EntityToSQL.Builder
                 case ExpressionType.MemberAccess:
                     var mexp = expression as MemberExpression;
 
-                    var columnName = this.GetMapInfo<T>().ColumnsDictionary [mexp.Member.Name];
-
-                    return $"{columnName}";              
+                    return GetMapInfo<T>().ColumnsDictionary[mexp.Member.Name];
                 default:
-                    throw new ArgumentException("The expression is not supported."); 
+                    throw new ArgumentException("The expression is not supported.");
             }
+        }
+
+        public string MakeJoin<T, K>( Expression<Func<T, K, bool>> predicate )
+        {
+            var mapInfo1 = GetMapInfo<T>();
+            var mapInfo2 = GetMapInfo<K>();
+
+            if( !(predicate.Body.NodeType == ExpressionType.Equal) )
+                throw new ArgumentException("The predicate should be a join property condition.");
+
+            var bexp = predicate.Body as BinaryExpression;
+
+            var column1 = mapInfo1.ColumnsDictionary[typeof( K ).Name];
+            var column2 = EvaluatePredicate<K>( bexp.Right );
+
+            return $"SELECT {ColumnsBuilder(mapInfo1)},{ColumnsBuilder(mapInfo2)} FROM {mapInfo1.Table} {mapInfo1.Alias} " +
+                   $"INNER JOIN {mapInfo2.Table} {mapInfo2.Alias} ON {mapInfo1.Alias}.{column1}={mapInfo2.Alias}.{column2}";
         }
     }
 }

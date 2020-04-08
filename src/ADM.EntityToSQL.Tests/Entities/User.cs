@@ -5,7 +5,7 @@ namespace ADM.EntityToSQL.Tests.Entities
     [TableMap( Name = "USERS" )]
     public class User
     {
-        [KeyMap( Name ="ID")]
+        [PKeyMap( Name ="ID")]
         public int Id { get; set; }
 
         [ColumnMap( Name ="FIRST_NAME")]
@@ -16,5 +16,8 @@ namespace ADM.EntityToSQL.Tests.Entities
 
         [ColumnMap( Name = "AGE" )]
         public int Age { get; set; }
+
+        [FKey( Name = "RoleID" )]
+        public Role Role { get; set; }
     }
 }

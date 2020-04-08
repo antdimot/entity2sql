@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ADM.EntityToSQL.Builder;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,49 +9,79 @@ namespace ADM.EntityToSQL.Meta
 {
     public class EntityInfo
     {
-        public string Table { get; set; } // Users
+        static readonly object _object = new object();
 
-        public IDictionary<string,string> ColumnsDictionary { get; set; }
+        private static int _counter = 0;
+
+        private static int NextCounter()
+        {
+            lock( _object )
+            {
+                _counter += 1;
+            }
+
+            return _counter;
+        }
+
+        public SQLStatementBuilder Builder { get; set; }
+
+        public int Id { get; private set; }
+
+        public string Table { get; set; }
+
+        public IDictionary<string,string> ColumnsDictionary { get; private set; }
 
         public string[] Columns { get; set; } // Id, Firstname, Lastname
 
-        public string[] Keys { get; set; } // Id
+        public string[] PKeys { get; set; }
+
+        public string Alias { get; private set; } // table alias
+
+        public object TypeAssociated { get; private set; }
 
         public string GetColumnName( string propertyName )
         {
             return ColumnsDictionary[propertyName];
         }
 
+        public EntityInfo( Type associated )
+        {
+            Id = NextCounter();
+
+            Alias = $"t{Id}";
+
+            TypeAssociated = associated;
+
+            ColumnsDictionary = new Dictionary<string, string>();
+        }
+
         public static EntityInfo BuildMap<T>()
         {
-            var einfo = new EntityInfo();
+            var einfo = new EntityInfo( typeof(T) );
 
             var tables = (TableMapAttribute[])typeof( T )
                                 .GetCustomAttributes( typeof( TableMapAttribute ), false );
             
             if( tables.Count() != 1 )
-                throw new Exception( $"The type {typeof( T ).Name} contains {tables.Count()}." );
+                throw new Exception( $"The type {typeof( T ).Name} contains {tables.Count()} table definition." );
 
             einfo.Table = tables[0].Name;
 
-            einfo.ColumnsDictionary = new Dictionary<string, string>();
             var keyArray = new ArrayList();
-
             foreach( var property in typeof( T ).GetProperties() )
             {
                 var columns = (ColumnMapAttribute[])property
                                     .GetCustomAttributes( typeof( ColumnMapAttribute ), true );
                 
                 // check if there are too much map information for the property
-                if( columns.Count() > 1 ) throw new Exception(
-                        string.Format( "The property {0} of type {0} contains more then one column map", property.Name, typeof( T ).Name ) );
+                if( columns.Count() > 1 ) throw new Exception( $"The property {property.Name} of type {typeof( T ).Name } contains more then one column map." );
 
                 // check if the property has column map information
                 if( columns.Count() > 0 )
                 {
-                    einfo.ColumnsDictionary.Add( property.Name, columns[0].Name );
+                    einfo.ColumnsDictionary.Add( $"{property.Name}", columns[0].Name );
 
-                    if( columns[0] is KeyMapAttribute ) // check if is a key
+                    if( columns[0] is PKeyMapAttribute ) // if primary key
                     {
                         keyArray.Add( columns[0].Name );
                     }
@@ -59,7 +90,7 @@ namespace ADM.EntityToSQL.Meta
 
             einfo.Columns = einfo.ColumnsDictionary.Select( item => item.Value ).ToArray();
 
-            einfo.Keys = (string[])keyArray.ToArray( typeof( string ) );
+            einfo.PKeys = (string[])keyArray.ToArray( typeof( string ) );
 
             return einfo;
         }

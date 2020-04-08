@@ -16,15 +16,17 @@ namespace ADM.EntityToSQL.Builder
             _mapInfo = new Dictionary<string, EntityInfo>();
         }
 
-        // manages entity map metadata
-        private EntityInfo GetMapInfo<T>()
+        public EntityInfo GetMapInfo<T>()
         {
-            if( !_mapInfo.ContainsKey( typeof(T).Name ) )
+            if( !_mapInfo.ContainsKey( typeof( T ).Name ) )
             {
-                _mapInfo.Add( typeof( T ).Name, EntityInfo.BuildMap<T>() );
+                var entityMap = EntityInfo.BuildMap<T>();
+                entityMap.Builder = this;
+
+                _mapInfo.Add( typeof( T ).Name, entityMap );
             }
 
-            return _mapInfo[typeof( T ).Name];
+            return _mapInfo[ typeof( T ).Name ];
         }
 
         private string ColumnsBuilder( EntityInfo entityInfo )
@@ -33,7 +35,7 @@ namespace ADM.EntityToSQL.Builder
 
             foreach( var item in entityInfo.Columns )
             {
-                columnBuilder.AppendFormat( "{0},", item );
+                columnBuilder.Append( $"{entityInfo.Alias}.{item},");
             }
 
             columnBuilder.Remove( columnBuilder.Length - 1, 1 );
@@ -47,9 +49,9 @@ namespace ADM.EntityToSQL.Builder
 
             foreach( var item in entityInfo.Columns )
             {
-                if( !entityInfo.Keys.Contains( item ) )
+                if( !entityInfo.PKeys.Contains( item ) )
                 {
-                    paramBuilder.AppendFormat( "@{0},", item );
+                    paramBuilder.AppendFormat( "@{0},", item.ToLower() );
                 }
             }
 

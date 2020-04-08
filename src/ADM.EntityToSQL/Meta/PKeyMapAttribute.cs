@@ -4,7 +4,6 @@ using System.Text;
 
 namespace ADM.EntityToSQL.Meta
 {
-    public class KeyMapAttribute : ColumnMapAttribute
-    {
-    }
+    public class PKeyMapAttribute : ColumnMapAttribute
+    { }
 }
