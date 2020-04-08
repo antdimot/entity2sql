@@ -31,7 +31,7 @@ A simple library for building SQL statements by entity class.
 
 > Usage:
 
-    var sqlBuilder = new SQLCommandBuilder();
+    var sqlBuilder = new SQLStatementBuilder();
 
     var select = sqlBuilder.MakeSelect<User>( o => o.FirstName == "Antonio" || o.LastName == "Di Motta" && o.Age == 49 );
     // SELECT t1.ID,t1.FIRST_NAME,t1.LAST_NAME,t1.AGE,t1.RoleID FROM USERS t1
