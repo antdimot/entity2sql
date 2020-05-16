@@ -9,7 +9,7 @@ A simple library for building SQL statements by entity class.
     [TableMap( Name = "USERS" )]
     public class User
     {
-        [KeyMap( Name ="ID")]
+        [PKeyMap( Name ="ID")]
         public int Id { get; set; }
 
         [ColumnMap( Name ="FIRST_NAME")]
@@ -17,6 +17,12 @@ A simple library for building SQL statements by entity class.
 
         [ColumnMap( Name = "LAST_NAME" )]
         public string LastName { get; set; }
+
+        [ColumnMap( Name = "AGE" )]
+        public int Age { get; set; }
+
+        [ColumnMap( Name = "RoleID" )]
+        public Role Role { get; set; }
     }
 
     [TableMap( Name = "ROLES" )]
